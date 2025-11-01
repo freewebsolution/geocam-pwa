@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>GeoCam PWA</title>
+
+  <!-- ✅ Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0ea5e9" />
+
+  <!-- ✅ Meta per iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="GeoCam" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 16px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    video, canvas { max-width: 100%; border-radius: 12px; }
+    button { padding:10px 14px; border-radius:10px; border:1px solid #ddd; cursor:pointer; }
+    .pill { padding:6px 10px; background:#eef; border-radius:999px; }
+  </style>
+</head>
+<body>
+  <h1>GeoCam PWA</h1>
+
+  <div class="row">
+    <button id="btnLoc">📍 Ottieni posizione</button>
+    <span id="locOut" class="pill">—</span>
+  </div>
+
+  <div class="row" style="margin-top:16px">
+    <button id="btnCam">📸 Apri fotocamera</button>
+    <button id="btnSnap" disabled>🖼️ Scatta foto</button>
+  </div>
+
+  <div style="margin-top:12px">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="canvas" width="1280" height="720" style="display:none"></canvas>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
