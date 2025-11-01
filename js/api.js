@@ -1,63 +1,29 @@
-import { LARAVEL_BASE_URL } from './config.js';
+export const LARAVEL_BASE_URL = "https://albo-fornitori.duckdns.org";
 
-const withBase = (path) => `${LARAVEL_BASE_URL}${path}`;
+export async function apiPost(path, data = {}, options = { json: true }) {
+  const body = options.json
+    ? JSON.stringify(data)
+    : new URLSearchParams(data).toString();
 
-// In Laravel con sessione+Sanctum da dominio diverso:
-// 1) chiamare /sanctum/csrf-cookie per settare XSRF cookie
-// 2) poi POST/GET con { credentials: 'include' } + X-XSRF-TOKEN
+  const headers = options.json
+    ? { "Content-Type": "application/json" }
+    : { "Content-Type": "application/x-www-form-urlencoded" };
 
-async function ensureCsrf() {
-  // Se stai usando Sanctum (consigliato per SPA su dominio diverso)
-  await fetch(withBase("/sanctum/csrf-cookie"), {
-    method: "GET",
-    credentials: "include",
-  });
-}
-
-export async function apiPost(url, data, { json = true } = {}) {
-  await ensureCsrf();
-  const headers = { "Accept": "application/json" };
-  let body;
-  if (json) {
-    headers["Content-Type"] = "application/json";
-    body = JSON.stringify(data);
-  } else {
-    body = new URLSearchParams(data);
-    headers["Content-Type"] = "application/x-www-form-urlencoded";
-  }
-
-  const res = await fetch(withBase(url), {
+  const res = await fetch(`${LARAVEL_BASE_URL}${path}`, {
     method: "POST",
-    credentials: "include",
     headers,
     body,
-    redirect: "follow",
+    credentials: "include",
   });
 
-  // Alcuni endpoint Laravel restituiscono HTML/redirect: gestiamolo
-  const contentType = res.headers.get("content-type") || "";
-  if (contentType.includes("application/json")) {
-    const json = await res.json();
-    if (!res.ok) throw new Error(json.message || "Errore API");
-    return json;
-  }
-  // Non JSON → torniamo solo l’oggetto Response
-  if (!res.ok) throw new Error("Errore API (non JSON)");
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res;
 }
 
-export async function apiGet(url) {
-  const res = await fetch(withBase(url), {
-    method: "GET",
+export async function apiGet(path) {
+  const res = await fetch(`${LARAVEL_BASE_URL}${path}`, {
     credentials: "include",
-    headers: { "Accept": "application/json" },
   });
-  const contentType = res.headers.get("content-type") || "";
-  if (contentType.includes("application/json")) {
-    const json = await res.json();
-    if (!res.ok) throw new Error(json.message || "Errore API");
-    return json;
-  }
-  if (!res.ok) throw new Error("Errore API (non JSON)");
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res;
 }

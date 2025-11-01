@@ -1,41 +1,19 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Operazione completata</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-b from-emerald-50 to-gray-100 min-h-screen flex items-center justify-center p-6">
-  <div class="bg-white shadow-lg rounded-2xl p-8 max-w-sm w-full text-center">
-    <svg xmlns="http://www.w3.org/2000/svg"
-         class="mx-auto w-16 h-16 text-emerald-500 bg-emerald-100 rounded-full p-3 mb-4"
-         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+  <div class="bg-white rounded-3xl shadow-lg p-8 max-w-sm w-full text-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto w-16 h-16 text-emerald-500 bg-emerald-100 rounded-full p-3 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
     </svg>
-
     <h1 class="text-2xl font-bold text-gray-800 mb-2">Operazione completata ✅</h1>
-    <p id="msg" class="text-gray-600 text-sm mb-6">
-      Azione eseguita correttamente.
-    </p>
-
-    <div class="space-y-3">
-      <a href="./scan.html"
-         class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold">
-        📷 Scansiona un altro QR
-      </a>
-      <a href="./index.html"
-         class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold">
-        🏠 Torna alla Home
-      </a>
-    </div>
+    <p class="text-gray-600 text-sm mb-6">L'operazione è stata eseguita correttamente.</p>
+    <a href="./index.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-semibold transition active:scale-95">🏠 Torna alla home</a>
   </div>
-
-  <script>
-    // Mostra un messaggio personalizzato passato via ?msg=...
-    const p = new URLSearchParams(location.search);
-    const msg = p.get('msg');
-    if (msg) document.getElementById('msg').textContent = msg;
-  </script>
 </body>
 </html>

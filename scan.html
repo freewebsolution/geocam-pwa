@@ -16,6 +16,11 @@
     <p id="msg" class="text-sm text-gray-500 mt-3">Premi “Avvia scansione”.</p>
   </div>
 
+  <audio id="beep" preload="auto">
+  <source src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" type="audio/ogg">
+</audio>
+
+
   <script type="module">
     import { LARAVEL_BASE_URL } from './js/config.js';
 
@@ -93,16 +98,19 @@
       msg.textContent = "Punta la fotocamera verso il QR…";
     }
 
-    function handleScan(code) {
-      // Normalizza come nel tuo flusso
-      let codice = code;
-      if (code.includes('://')) {
-        const parts = code.split('/');
-        codice = parts.pop() || parts.pop();
-      }
-      // Reindirizza al tuo Laravel (controller gestisce permessi/ruoli/flussi)
-      location.href = `${LARAVEL_BASE_URL}/qrcode/${encodeURIComponent(codice)}`;
-    }
+function handleScan(code) {
+  const beep = document.getElementById("beep");
+  if (beep) beep.play().catch(() => {});
+  
+  // Normalizza QR
+  let codice = code;
+  if (code.includes('://')) {
+    codice = code.split('/').pop();
+  }
+
+  location.href = `${LARAVEL_BASE_URL}/qrcode/${encodeURIComponent(codice)}`;
+}
+
   </script>
 
   <script>

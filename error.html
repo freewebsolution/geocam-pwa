@@ -1,42 +1,21 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Errore</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-b from-red-50 to-gray-100 min-h-screen flex items-center justify-center p-6">
-
   <div class="bg-white rounded-3xl shadow-lg p-8 max-w-sm w-full text-center">
-    <svg xmlns="http://www.w3.org/2000/svg"
-         class="w-16 h-16 mx-auto mb-4 text-red-500 bg-red-100 p-3 rounded-full"
-         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto mb-4 text-red-500 bg-red-100 p-3 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
     </svg>
-
-    <h2 class="text-2xl font-bold text-gray-800 mb-2">Si è verificato un errore</h2>
-    <p id="msg" class="text-gray-600 text-sm mb-6 leading-relaxed">
-      Qualcosa non è andato a buon fine. Riprova più tardi.
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">Oops!</h2>
+    <p class="text-gray-600 text-sm mb-6 leading-relaxed">
+      Si è verificato un errore inatteso. Riprova più tardi.
     </p>
-
-    <div class="space-y-3">
-      <a href="./scan.html"
-         class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold">
-        🔁 Riprova / Scansiona di nuovo
-      </a>
-      <a href="./index.html"
-         class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold">
-        🏠 Torna alla Home
-      </a>
-    </div>
+    <a href="./index.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg text-sm font-semibold transition active:scale-95">🏠 Torna alla home</a>
   </div>
-
-  <script>
-    // Mostra messaggio passato via ?msg=...
-    const p = new URLSearchParams(location.search);
-    const msg = p.get('msg');
-    if (msg) document.getElementById('msg').innerHTML = msg; // permette HTML semplice dal backend se serve
-  </script>
 </body>
 </html>

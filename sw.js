@@ -1,28 +1,16 @@
-const CACHE = "qr-pwa-v1";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./login.html",
-  "./scan.html",
-  "./manifest.json",
-  "./offline.html",
-  "./js/config.js",
-  "./js/api.js",
-  "./js/auth.js"
-];
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", () => clients.claim());
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
-  self.skipWaiting();
-});
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
-  );
-  self.clients.claim();
-});
-self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match("./offline.html")))
-  );
+self.addEventListener("fetch", (event) => {
+  const url = event.request.url;
+  // Non interferire con Laravel o CDN
+  if (
+    url.includes("albo-fornitori.duckdns.org") ||
+    url.startsWith("https://unpkg.com/") ||
+    url.startsWith("https://cdn.tailwindcss.com")
+  ) {
+    return;
+  }
+  // Cache-first per file statici
+  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
 });

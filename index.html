@@ -1,27 +1,24 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <title>Gestione QR - PWA</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gestione QR</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="manifest" href="./manifest.json"/>
-  <meta name="theme-color" content="#4F46E5"/>
-  <style>body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}</style>
 </head>
-<body class="bg-gradient-to-b from-indigo-50 to-gray-100 min-h-screen flex items-center justify-center p-4">
-  <div class="bg-white rounded-3xl shadow p-6 max-w-sm w-full text-center">
-    <h1 class="text-2xl font-bold text-indigo-600 mb-4">📦 Gestione QR</h1>
-    <div class="space-y-3">
-      <a href="./login.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold">🔐 Login</a>
-      <a href="./scan.html"  class="block bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold">📷 Scansiona</a>
-    </div>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow p-6 max-w-sm w-full text-center">
+    <h1 class="text-xl font-bold text-indigo-600 mb-4">📷 Scansiona un QR</h1>
+    <video id="camera" class="rounded-xl shadow mb-4" autoplay playsinline></video>
+    <button id="startBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold">Avvia Scanner</button>
   </div>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
-    }
+  <script type="module">
+    import { startScanner, openQrPage } from "./js/scanner.js";
+    const startBtn = document.getElementById("startBtn");
+    startBtn.addEventListener("click", () => {
+      startScanner(code => openQrPage(code));
+    });
   </script>
 </body>
 </html>
