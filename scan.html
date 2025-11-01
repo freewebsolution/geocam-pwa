@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Scanner QR</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/html5-qrcode@2.3.9/minified/html5-qrcode.min.js"></script>
+  <style>body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}</style>
+</head>
+<body class="bg-gradient-to-b from-emerald-50 to-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl shadow p-6 max-w-sm w-full text-center">
+    <h1 class="text-xl font-bold text-emerald-600 mb-4">📷 Scanner QR</h1>
+    <button id="start" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold">▶️ Avvia scansione</button>
+    <div id="qr-reader" class="mt-4 rounded-xl overflow-hidden"></div>
+    <p id="msg" class="text-sm text-gray-500 mt-3">Premi “Avvia scansione”.</p>
+  </div>
+
+  <script type="module">
+    import { LARAVEL_BASE_URL } from './js/config.js';
+
+    const startBtn = document.getElementById('start');
+    const msg = document.getElementById('msg');
+    let scanner = null;
+
+    // Preferisco BarcodeDetector se disponibile (più leggero)
+    const hasBarcode = 'BarcodeDetector' in window;
+
+    startBtn.addEventListener('click', async () => {
+      startBtn.disabled = true;
+      startBtn.textContent = "📷 Attivazione fotocamera…";
+
+      try {
+        // Sblocca permesso fotocamera (Android/iOS)
+        const test = await navigator.mediaDevices.getUserMedia({ video: true });
+        test.getTracks().forEach(t => t.stop());
+
+        if (hasBarcode) {
+          // Implementazione semplice con <video> + BarcodeDetector
+          await startBarcodeDetector();
+        } else {
+          // Fallback: html5-qrcode
+          await startHtml5Qrcode();
+        }
+        startBtn.style.display = 'none';
+      } catch (e) {
+        msg.textContent = "⚠️ Permesso fotocamera negato o non disponibile.";
+        startBtn.disabled = false;
+        startBtn.textContent = "▶️ Avvia scansione";
+      }
+    });
+
+    async function startBarcodeDetector() {
+      const wrap = document.getElementById('qr-reader');
+      wrap.innerHTML = '<video id="v" autoplay playsinline muted style="width:100%;height:360px;object-fit:cover;border-radius:0.75rem;"></video>';
+      const v = document.getElementById('v');
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      v.srcObject = stream;
+
+      const detector = new BarcodeDetector({ formats: ['qr_code'] });
+      let last = null;
+
+      v.addEventListener('loadeddata', () => {
+        msg.textContent = "Punta la fotocamera verso il QR…";
+        requestAnimationFrame(loop);
+      });
+
+      async function loop() {
+        if (!v.srcObject) return;
+        try {
+          const r = await detector.detect(v);
+          if (r.length) {
+            const val = (r[0].rawValue || '').trim();
+            if (val !== last) { last = val; return requestAnimationFrame(loop); }
+            handleScan(val);
+            return;
+          }
+        } catch {}
+        requestAnimationFrame(loop);
+      }
+    }
+
+    async function startHtml5Qrcode() {
+      const qr = new Html5Qrcode("qr-reader");
+      await qr.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        (decoded) => {
+          qr.stop().then(() => handleScan(decoded)).catch(() => handleScan(decoded));
+        },
+        () => {}
+      );
+      msg.textContent = "Punta la fotocamera verso il QR…";
+    }
+
+    function handleScan(code) {
+      // Normalizza come nel tuo flusso
+      let codice = code;
+      if (code.includes('://')) {
+        const parts = code.split('/');
+        codice = parts.pop() || parts.pop();
+      }
+      // Reindirizza al tuo Laravel (controller gestisce permessi/ruoli/flussi)
+      location.href = `${LARAVEL_BASE_URL}/qrcode/${encodeURIComponent(codice)}`;
+    }
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+  </script>
+</body>
+</html>

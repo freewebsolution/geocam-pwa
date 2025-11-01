@@ -1,95 +1,27 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport"
-        content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>QR Locator</title>
-
-  <!-- Tailwind e libreria QR -->
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Gestione QR - PWA</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/html5-qrcode@2.3.9/html5-qrcode.min.js"></script>
-
-  <!-- Manifest + meta iOS -->
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0ea5e9" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="QR Locator" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-
-  <style>
-    body {
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      background: #f3f4f6;
-    }
-  </style>
+  <link rel="manifest" href="./manifest.json"/>
+  <meta name="theme-color" content="#4F46E5"/>
+  <style>body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}</style>
 </head>
-
-<body class="min-h-screen flex flex-col items-center p-4">
-  <header class="text-center mt-6 mb-4">
-    <h1 class="text-3xl font-bold text-sky-600">QR Locator</h1>
-    <p class="text-gray-500 text-sm mt-1">Scansiona QR Code e ottieni posizione GPS</p>
-  </header>
-
-  <main class="w-full max-w-sm flex flex-col items-center">
-    <div id="qr-reader" class="w-full bg-white rounded-xl shadow"></div>
-    <div id="qr-result"
-         class="mt-4 p-3 text-center bg-green-100 text-green-700 rounded-xl hidden"></div>
-
-    <button id="btnLoc"
-            class="w-full bg-sky-600 text-white py-3 mt-6 rounded-xl shadow">
-      📍 Ottieni posizione
-    </button>
-    <div id="locOut"
-         class="mt-2 text-center text-gray-700 bg-white p-3 rounded-xl shadow">
-      —
+<body class="bg-gradient-to-b from-indigo-50 to-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl shadow p-6 max-w-sm w-full text-center">
+    <h1 class="text-2xl font-bold text-indigo-600 mb-4">📦 Gestione QR</h1>
+    <div class="space-y-3">
+      <a href="./login.html" class="block bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold">🔐 Login</a>
+      <a href="./scan.html"  class="block bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold">📷 Scansiona</a>
     </div>
-  </main>
+  </div>
 
   <script>
-    // === QR Scanner ===
-    function onScanSuccess(decodedText) {
-      const resultBox = document.getElementById("qr-result");
-      resultBox.textContent = "📦 QR code: " + decodedText;
-      resultBox.classList.remove("hidden");
-      html5QrcodeScanner.clear(); // stop scan after success
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
     }
-
-    // Attivazione solo dopo gesto utente (richiesto da Safari)
-    window.addEventListener("DOMContentLoaded", () => {
-      const startButton = document.createElement("button");
-      startButton.textContent = "▶️ Avvia scansione QR";
-      startButton.className =
-        "w-full bg-indigo-600 text-white py-3 rounded-xl shadow active:scale-95 transition";
-      document.querySelector("main").prepend(startButton);
-
-      startButton.addEventListener("click", () => {
-        startButton.remove();
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-          "qr-reader",
-          { fps: 10, qrbox: 250 }
-        );
-        html5QrcodeScanner.render(onScanSuccess);
-      });
-    });
-
-    // === Geolocalizzazione ===
-    document.getElementById("btnLoc").addEventListener("click", () => {
-      if (!("geolocation" in navigator)) {
-        locOut.textContent = "Geolocalizzazione non supportata";
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          locOut.textContent = `📍 Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)}`;
-        },
-        (err) => { locOut.textContent = "Errore: " + err.message; },
-        { enableHighAccuracy: true }
-      );
-    });
   </script>
 </body>
 </html>
