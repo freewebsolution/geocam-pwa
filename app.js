@@ -1,6 +1,8 @@
 // Registra il Service Worker per installabilità/offline
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js").catch(console.error);
+  navigator.serviceWorker.register("./sw.js").then(() => {
+    console.log("✅ Service Worker attivo");
+  });
 }
 
 // Helpers
